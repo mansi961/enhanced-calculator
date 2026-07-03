@@ -5,10 +5,14 @@ Run with: python main.py
 Type 'help' at the prompt to see available commands.
 """
 
+from colorama import init, Fore, Style
+
 from app.calculator import Calculator, LoggingObserver, AutoSaveObserver
 from app.exceptions import CalculatorError
 from app.input_validators import validate_operands
 from app.help_menu import build_help_menu
+
+init(autoreset=True)
 
 ARITHMETIC_COMMANDS = {
     "add", "subtract", "multiply", "divide", "power",
@@ -27,7 +31,7 @@ def build_calculator() -> Calculator:
 def print_history(calculator: Calculator) -> None:
     history = calculator.get_history()
     if not history:
-        print("History is empty.")
+        print(f"{Fore.YELLOW}History is empty.{Style.RESET_ALL}")
         return
     for i, calc in enumerate(history, start=1):
         print(f"{i}. {calc}")
@@ -35,25 +39,25 @@ def print_history(calculator: Calculator) -> None:
 
 def handle_arithmetic(calculator: Calculator, command: str, args: list) -> None:
     if len(args) != 2:
-        print(f"Error: '{command}' requires exactly 2 numbers, e.g. '{command} 4 5'")
+        print(f"{Fore.RED}Error: '{command}' requires exactly 2 numbers, e.g. '{command} 4 5'{Style.RESET_ALL}")
         return
     try:
         a, b = validate_operands(args[0], args[1], calculator.config)
         result = calculator.perform_operation(command, a, b)
-        print(f"Result: {result.result}")
+        print(f"{Fore.GREEN}Result: {result.result}{Style.RESET_ALL}")
     except CalculatorError as e:
-        print(f"Error: {e}")
+        print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
 
 
 def run_repl() -> None:
     calculator = build_calculator()
-    print("Enhanced Calculator REPL. Type 'help' for commands, 'exit' to quit.")
+    print(f"{Fore.CYAN}Enhanced Calculator REPL. Type 'help' for commands, 'exit' to quit.{Style.RESET_ALL}")
 
     while True:
         try:
-            raw_input_line = input(">>> ").strip()
+            raw_input_line = input(f"{Fore.CYAN}>>> {Style.RESET_ALL}").strip()
         except (EOFError, KeyboardInterrupt):
-            print("\nExiting calculator. Goodbye!")
+            print(f"\n{Fore.CYAN}Exiting calculator. Goodbye!{Style.RESET_ALL}")
             break
 
         if not raw_input_line:
@@ -64,7 +68,7 @@ def run_repl() -> None:
         args = parts[1:]
 
         if command == "exit":
-            print("Exiting calculator. Goodbye!")
+            print(f"{Fore.CYAN}Exiting calculator. Goodbye!{Style.RESET_ALL}")
             break
         elif command == "help":
             print(build_help_menu())
@@ -72,35 +76,35 @@ def run_repl() -> None:
             print_history(calculator)
         elif command == "clear":
             calculator.clear_history()
-            print("History cleared.")
+            print(f"{Fore.GREEN}History cleared.{Style.RESET_ALL}")
         elif command == "undo":
             try:
                 calculator.undo()
-                print("Undo successful.")
+                print(f"{Fore.GREEN}Undo successful.{Style.RESET_ALL}")
             except CalculatorError as e:
-                print(f"Error: {e}")
+                print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
         elif command == "redo":
             try:
                 calculator.redo()
-                print("Redo successful.")
+                print(f"{Fore.GREEN}Redo successful.{Style.RESET_ALL}")
             except CalculatorError as e:
-                print(f"Error: {e}")
+                print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
         elif command == "save":
             try:
                 calculator.save_history()
-                print("History saved.")
+                print(f"{Fore.GREEN}History saved.{Style.RESET_ALL}")
             except CalculatorError as e:
-                print(f"Error: {e}")
+                print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
         elif command == "load":
             try:
                 calculator.load_history()
-                print("History loaded.")
+                print(f"{Fore.GREEN}History loaded.{Style.RESET_ALL}")
             except CalculatorError as e:
-                print(f"Error: {e}")
+                print(f"{Fore.RED}Error: {e}{Style.RESET_ALL}")
         elif command in ARITHMETIC_COMMANDS:
             handle_arithmetic(calculator, command, args)
         else:
-            print(f"Unknown command: '{command}'. Type 'help' for a list of commands.")
+            print(f"{Fore.RED}Unknown command: '{command}'. Type 'help' for a list of commands.{Style.RESET_ALL}")
 
 
 if __name__ == "__main__":
