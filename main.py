@@ -8,25 +8,12 @@ Type 'help' at the prompt to see available commands.
 from app.calculator import Calculator, LoggingObserver, AutoSaveObserver
 from app.exceptions import CalculatorError
 from app.input_validators import validate_operands
+from app.help_menu import build_help_menu
 
 ARITHMETIC_COMMANDS = {
     "add", "subtract", "multiply", "divide", "power",
     "root", "modulus", "int_divide", "percent", "abs_diff",
 }
-
-HELP_TEXT = """
-Available commands:
-  add, subtract, multiply, divide, power, root,
-  modulus, int_divide, percent, abs_diff   - perform a calculation (usage: <command> <a> <b>)
-  history                                  - show calculation history
-  clear                                    - clear calculation history
-  undo                                     - undo the last calculation
-  redo                                     - redo the last undone calculation
-  save                                     - save history to file
-  load                                     - load history from file
-  help                                     - show this help message
-  exit                                     - exit the application
-"""
 
 
 def build_calculator() -> Calculator:
@@ -80,7 +67,7 @@ def run_repl() -> None:
             print("Exiting calculator. Goodbye!")
             break
         elif command == "help":
-            print(HELP_TEXT)
+            print(build_help_menu())
         elif command == "history":
             print_history(calculator)
         elif command == "clear":
